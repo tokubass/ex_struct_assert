@@ -36,7 +36,7 @@ by adding `struct_assert` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:struct_assert, "~> 0.1.0"}]
+  [{:struct_assert, ">= 0.0.0"}]
 end
 ```
 

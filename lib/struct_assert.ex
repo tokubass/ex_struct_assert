@@ -4,32 +4,32 @@ defmodule StructAssert do
   """
 
   @doc """
+  assert only a part of struct and map.
 
-  ## Examples
-  defmodule MyStruct do
-    defstruct a: 1, b: 1, z: 10
-  end
+      defmodule MyStruct do
+        defstruct a: 1, b: 1, z: 10
+      end
 
-  defmodule Example
-    use ExUnit.Case
-    import StructAssert, only: [assert_subset?: 2]
+      defmodule Example
+        use ExUnit.Case
+        import StructAssert, only: [assert_subset?: 2]
 
-    got  = %MyStruct{}
-    assert_subset?(
-      got,
-      %{
-        a: 1,
-        b: 2
-      }
-    )
+        got  = %MyStruct{}
+        assert_subset?(
+          got,
+          %{
+            a: 1,
+            b: 2
+          }
+        )
+      end
 
-    # code:  assert_subset?(got, %{a: 1, b: 2})
-    # left:  %{a: 1, z: 10, b: 1}
-    # right: %{a: 1, z: 10, b: 2}
-  end
-
+      # code:  assert_subset?(got, %{a: 1, b: 2})
+      # left:  %{a: 1, z: 10, b: 1}
+      # right: %{a: 1, z: 10, b: 2}
 
   """
+
   defmacro assert_subset?({got_var_name,_,_} = got, {expect_var_name,_,_} = expect ) do
     quote do
       import  ExUnit.Assertions
