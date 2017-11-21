@@ -1,5 +1,6 @@
 # StructAssert
 
+A useful tool for testing sturct and map in Elixir.
 
 ## Examples
 
