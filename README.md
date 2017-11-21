@@ -1,6 +1,32 @@
 # StructAssert
 
-**TODO: Add description**
+
+## Examples
+
+```elixir
+  
+  defmodule MyStruct do
+    defstruct a: 1, b: 1, z: 10
+  end
+
+  defmodule Example
+    use ExUnit.Case
+    import StructAssert, only: [assert_subset?: 2]
+
+    got  = %MyStruct{}
+    assert_subset?(
+      got,
+      %{
+        a: 1,
+        b: 2
+      }
+    )
+
+    # code:  assert_subset?(got, %{a: 1, b: 2})
+    # left:  %{a: 1, z: 10, b: 1}
+    # right: %{a: 1, z: 10, b: 2}
+  end
+```
 
 ## Installation
 
