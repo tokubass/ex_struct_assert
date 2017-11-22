@@ -12,19 +12,19 @@ defmodule StructAssert do
 
       defmodule Example
         use ExUnit.Case
-        import StructAssert, only: [assert_subset?: 2]
+        import StructAssert, only: [assert_subset: 2]
 
-        assert_subset?(%MyStruct{}, [a: 1, b: 2])
-        # code:  assert_subset?(%MyStruct{}, [a: 1, b: 2])
+        assert_subset(%MyStruct{}, [a: 1, b: 2])
+        # code:  assert_subset(%MyStruct{}, [a: 1, b: 2])
         # left:  %{a: 1, b: 1, z: 10}
         # right: %{a: 1, b: 2, z: 10}
       end
 
 
   """
-  defmacro assert_subset?(got, expect) do
-    expr = build_expr_for_error_message(got,expect)
 
+  defmacro assert_subset(got, expect) do
+    expr = build_expr_for_error_message(got,expect)
     quote do
       import  ExUnit.Assertions
       got_map  = StructAssert.got_value_to_map(unquote(got))
@@ -37,10 +37,21 @@ defmodule StructAssert do
     end
   end
 
+  @doc """
+  deprecated
+  """
+  defmacro assert_subset?(got, expect) do
+    quote do
+      StructAssert.assert_subset(unquote(got),unquote(expect))
+    end
+  end
+
+
+
   def build_expr_for_error_message(got,expect) do
     got_var_name = got |> Macro.expand(__ENV__) |> Macro.to_string
     expect_var_name = expect |> Macro.expand(__ENV__) |> Macro.to_string
-    "assert_subset?(#{got_var_name}, #{expect_var_name})"
+    "assert_subset(#{got_var_name}, #{expect_var_name})"
   end
 
   defmacro got_value_to_map(got) do

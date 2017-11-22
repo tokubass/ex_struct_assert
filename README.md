@@ -14,8 +14,8 @@ A useful tool for testing sturct and map in Elixir.
     use ExUnit.Case
     import StructAssert, only: [assert_subset?: 2]
 
-    assert_subset?(%MyStruct{}, [a: 1, b: 2])
-    # code:  assert_subset?(%MyStruct{}, [a: 1, b: 2])
+    assert_subset(%MyStruct{}, [a: 1, b: 2])
+    # code:  assert_subset(%MyStruct{}, [a: 1, b: 2])
     # left:  %{a: 1, b: 1, z: 10}
     # right: %{a: 1, b: 2, z: 10}
   end

@@ -1,6 +1,6 @@
 defmodule ComplexTest do
   use ExUnit.Case
-  import StructAssert, only: [assert_subset?: 2]
+  import StructAssert, only: [assert_subset: 2]
 
   test "map" do
     got = %{
@@ -10,8 +10,8 @@ defmodule ComplexTest do
                   "gender" => "male"}
     }
 
-   assert_subset?(got,   %{ "data" => %{ :currentCity => "pune", "mobileNumber" => "1234567890"}}  )
-   assert_subset?(got["data"],   %{ :currentCity => "pune", "mobileNumber" => "1234567890"} )
+   assert_subset(got,   %{ "data" => %{ :currentCity => "pune", "mobileNumber" => "1234567890"}}  )
+   assert_subset(got["data"],   %{ :currentCity => "pune", "mobileNumber" => "1234567890"} )
   end
 
   test "map2" do
@@ -20,12 +20,12 @@ defmodule ComplexTest do
       %{ a: 2 } => %{ b: 2 }
     }
     res = try do
-            assert_subset?(got,   %{ [:data, :data2] => %{"currentCity" => "pune", %{ a: 1 } => [1,2,3] }})
+            assert_subset(got,   %{ [:data, :data2] => %{"currentCity" => "pune", %{ a: 1 } => [1,2,3] }})
           rescue
               error in [ExUnit.AssertionError] -> error
           end
 
-    assert res.expr  == "assert_subset?(got, %{[:data, :data2] => %{\"currentCity\" => \"pune\", %{a: 1} => [1, 2, 3]}})"
+    assert res.expr  == "assert_subset(got, %{[:data, :data2] => %{\"currentCity\" => \"pune\", %{a: 1} => [1, 2, 3]}})"
     assert res.left  == %{%{a: 2} => %{b: 2}, [:data, :data2] => %{"currentCity" => "pune", %{a: 1} => 1}}
     assert res.right == %{%{a: 2} => %{b: 2}, [:data, :data2] => %{"currentCity" => "pune", %{a: 1} => [1, 2, 3]}}
   end
