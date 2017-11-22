@@ -123,7 +123,7 @@ defmodule StructAssertTest do
       assert res.left  == %{a: 1, b: 1}
       assert res.right == %{a: 1, b: 2}
     end
-    
   end
 
+  
 end

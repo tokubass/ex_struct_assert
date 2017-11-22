@@ -46,8 +46,7 @@ defmodule StructAssert do
                 end
 
       
-      expect = Map.merge(got_map, unquote(expect));
-
+      expect = DeepMerge.deep_merge(got_map,unquote(expect))
       expect_var = case unquote(expect_var_name) do
                      :%   -> inspect(unquote(expect))
                      :%{} -> inspect(unquote(expect))

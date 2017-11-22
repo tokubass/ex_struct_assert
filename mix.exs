@@ -35,6 +35,7 @@ defmodule StructAssert.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
+      {:deep_merge, "~> 0.1.1"},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
