@@ -125,5 +125,31 @@ defmodule StructAssertTest do
     end
   end
 
+  describe "subset(struct,kwlist)" do
+    test "success" do
+      assert_subset?(
+        struct(MyStruct, a: 1,b: 2),
+        a: 1, b: 2
+      )
+      assert_subset?(
+        struct(MyStruct, a: 1,b: 2),
+        [a: 1, b: 2]
+      )
+    end
+    test "fail" do
+
+      res = try do
+              assert_subset?(
+                struct(MyStruct, a: 1,b: 2),
+                [a: 1, b: 3]
+              )
+            rescue
+              error in [ExUnit.AssertionError] -> error
+            end
+      assert res.expr  == "assert_subset?(struct(MyStruct, a: 1, b: 2), [a: 1, b: 3])"
+      assert res.left  == %{a: 1, b: 2, z: 10}
+      assert res.right == %{a: 1, b: 3, z: 10}
+    end
+  end
   
 end

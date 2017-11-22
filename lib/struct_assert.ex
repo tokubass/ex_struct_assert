@@ -29,25 +29,53 @@ defmodule StructAssert do
       # right: %{a: 1, z: 10, b: 2}
 
   """
-  defmacro assert_subset?(got, expect) do
+
+  def build_expr_for_error_message(got,expect) do
     got_var_name = got |> Macro.expand(__ENV__) |> Macro.to_string
     expect_var_name = expect |> Macro.expand(__ENV__) |> Macro.to_string
+    "assert_subset?(#{got_var_name}, #{expect_var_name})"
+  end
+
+  defmacro got_value_to_map(got) do
+    quote do
+      case unquote(got) do
+        %_{} -> Map.from_struct(unquote(got))
+        %{}  -> unquote(got)
+      end
+    end
+  end
+
+  defmacro expect_value_to_map(expect) when is_list(expect) do
+    quote do
+      case Keyword.keyword?(unquote(expect)) do
+        true -> Enum.into(unquote(expect), %{})
+      end
+    end
+  end
+  defmacro expect_value_to_map(expect) do
+    quote do
+      case unquote(expect) do
+        %{}  -> unquote(expect)
+      end
+    end
+  end
+
+
+
+
+  defmacro assert_subset?(got, expect) do
+    expr = build_expr_for_error_message(got,expect)
 
     quote do
       import  ExUnit.Assertions
-      got_map = case unquote(got) do
-                  %_{} -> Map.from_struct(unquote(got))
-                  %{}  -> unquote(got)
-                  _    -> :error
-                end
-
-      expect = DeepMerge.deep_merge(got_map,unquote(expect))
+      got_map  = StructAssert.got_value_to_map(unquote(got))
+      expect_map = StructAssert.expect_value_to_map(unquote(expect))
+      expect = DeepMerge.deep_merge(got_map,expect_map)
       assert got_map == expect,
-        expr: "assert_subset?(#{unquote(got_var_name)}, #{unquote(expect_var_name)})",
+        expr: unquote(expr),
         left: got_map,
         right: expect
     end
   end
-
 
 end
