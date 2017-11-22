@@ -73,7 +73,7 @@ defmodule StructAssertTest do
             rescue
               error in [ExUnit.AssertionError] -> error
             end
-      assert res.expr  == "assert_subset?(%MyStruct{a: 1, b: 1, z: 10}, expect_fail)"
+      assert res.expr  == "assert_subset?(%MyStruct{}, expect_fail)"
       assert res.left  == %{a: 1, b: 1, z: 10 }
       assert res.right == %{a: 1, b: 2, z: 10 }
     end
@@ -86,7 +86,7 @@ defmodule StructAssertTest do
     test "fail" do
       res = try do
               assert_subset?(
-                %MyStruct{},
+                %MyStruct{a: 1},
                 %{
                   a: 1,
                   b: 2
@@ -96,7 +96,7 @@ defmodule StructAssertTest do
               error in [ExUnit.AssertionError] -> error
             end
 
-      assert res.expr  == "assert_subset?(%MyStruct{a: 1, b: 1, z: 10}, %{a: 1, b: 2})"
+      assert res.expr  == "assert_subset?(%MyStruct{a: 1}, %{a: 1, b: 2})"
       assert res.left  == %{a: 1, b: 1, z: 10 }
       assert res.right == %{a: 1, b: 2, z: 10 }
     end

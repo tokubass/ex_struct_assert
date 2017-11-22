@@ -29,8 +29,10 @@ defmodule StructAssert do
       # right: %{a: 1, z: 10, b: 2}
 
   """
+  defmacro assert_subset?(got, expect) do
+    got_var_name = got |> Macro.expand(__ENV__) |> Macro.to_string
+    expect_var_name = expect |> Macro.expand(__ENV__) |> Macro.to_string
 
-  defmacro assert_subset?({got_var_name,_,_} = got, {expect_var_name,_,_} = expect ) do
     quote do
       import  ExUnit.Assertions
       got_map = case unquote(got) do
@@ -39,25 +41,13 @@ defmodule StructAssert do
                   _    -> :error
                 end
 
-      got_var = case unquote(got_var_name) do
-                  :%   -> inspect(unquote(got))
-                  :%{} -> inspect(unquote(got))
-                  _    -> unquote(got_var_name)
-                end
-
-      
       expect = DeepMerge.deep_merge(got_map,unquote(expect))
-      expect_var = case unquote(expect_var_name) do
-                     :%   -> inspect(unquote(expect))
-                     :%{} -> inspect(unquote(expect))
-                     _    -> unquote(expect_var_name)
-                   end
-
       assert got_map == expect,
-        expr: "assert_subset?(#{got_var}, #{expect_var})",
+        expr: "assert_subset?(#{unquote(got_var_name)}, #{unquote(expect_var_name)})",
         left: got_map,
         right: expect
     end
   end
+
 
 end
