@@ -5,7 +5,7 @@ A useful tool for testing sturct and map in Elixir.
 ## Examples
 
 ```elixir
-  
+
   defmodule MyStruct do
     defstruct a: 1, b: 1, z: 10
   end
@@ -14,19 +14,12 @@ A useful tool for testing sturct and map in Elixir.
     use ExUnit.Case
     import StructAssert, only: [assert_subset?: 2]
 
-    got  = %MyStruct{}
-    assert_subset?(
-      got,
-      %{
-        a: 1,
-        b: 2
-      }
-    )
-
-    # code:  assert_subset?(got, %{a: 1, b: 2})
-    # left:  %{a: 1, z: 10, b: 1}
-    # right: %{a: 1, z: 10, b: 2}
+    assert_subset?(%MyStruct{}, [a: 1, b: 2])
+    # code:  assert_subset?(%MyStruct{}, [a: 1, b: 2])
+    # left:  %{a: 1, b: 1, z: 10}
+    # right: %{a: 1, b: 2, z: 10}
   end
+
 ```
 
 ## Installation
