@@ -52,18 +52,11 @@ defmodule StructAssert do
     end
   end
 
-  defmacro expect_value_to_map(expect) when is_list(expect) do
-    quote do
-      case Keyword.keyword?(unquote(expect)) do
-        true -> Enum.into(unquote(expect), %{})
-      end
-    end
-  end
-
   defmacro expect_value_to_map(expect) do
     quote do
       case unquote(expect) do
         %{}  -> unquote(expect)
+        is_list -> Enum.into(unquote(expect), %{})
       end
     end
   end

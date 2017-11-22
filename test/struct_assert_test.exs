@@ -132,8 +132,8 @@ defmodule StructAssertTest do
         a: 1, b: 2
       )
       assert_subset?(
-        struct(MyStruct, a: 1,b: 2),
-        [a: 1, b: 2]
+        struct(MyStruct, [a: 1, b: [1,2], z: :v]),
+        [a: 1, b: [1,2]] ++ [z: :v ]
       )
     end
     test "fail" do
