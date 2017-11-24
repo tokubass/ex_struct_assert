@@ -38,23 +38,24 @@ defmodule StructAssert do
 
   defmacro assert_subset(got, expect) do
     expr = build_expr_for_error_message(got,expect)
+    got_map  = got_value_to_map(got)
+    expect_map = expect_value_to_map(expect)
+
     quote do
-      import  ExUnit.Assertions
-      got_map  = StructAssert.got_value_to_map(unquote(got))
-      expect_map = StructAssert.expect_value_to_map(unquote(expect))
+      got_map = unquote(got_map)
+      expect_map = unquote(expect_map)
+      expect = DeepMerge.deep_merge(got_map, expect_map,
+        fn
+          (_, original, override) when is_function(original) and is_function(override) -> DeepMerge.continue_deep_merge
+          (_, original, override) when is_function(override) ->
+            case override.(original) do
+              true -> original
+              _ -> override
+            end
+            (_, _original, _override) -> DeepMerge.continue_deep_merge
+        end
+      )
 
-      resolver = fn
-        (_, original, override) when is_function(original) and is_function(override) -> DeepMerge.continue_deep_merge
-        (_, original, override) when is_function(override) ->
-          case override.(original) do
-                 true -> original
-                 _ -> override
-          end
-
-        (_, _original, _override) -> DeepMerge.continue_deep_merge
-      end
-
-      expect = DeepMerge.deep_merge(got_map,expect_map, resolver)
       assert got_map == expect,
         expr: unquote(expr),
         left: got_map,
@@ -62,38 +63,28 @@ defmodule StructAssert do
     end
   end
 
-
-
-  @doc """
-  deprecated
-  """
-  defmacro assert_subset?(got, expect) do
-    quote do
-      StructAssert.assert_subset(unquote(got),unquote(expect))
-    end
-  end
-
-
-  def build_expr_for_error_message(got,expect) do
+  defp build_expr_for_error_message(got,expect) do
     got_var_name = got |> Macro.expand(__ENV__) |> Macro.to_string
     expect_var_name = expect |> Macro.expand(__ENV__) |> Macro.to_string
     "assert_subset(#{got_var_name}, #{expect_var_name})"
   end
 
-  defmacro got_value_to_map(got) do
+  defp got_value_to_map(got) do
     quote do
-      case unquote(got) do
-        %_{} -> Map.from_struct(unquote(got))
-        %{}  -> unquote(got)
+      got = unquote(got)
+      case got do
+        %_{} -> Map.from_struct(got)
+        %{}  -> got
       end
     end
   end
 
-  defmacro expect_value_to_map(expect) do
+  defp expect_value_to_map(expect) do
     quote do
-      case unquote(expect) do
-        %{}  -> unquote(expect)
-        is_list -> Enum.into(unquote(expect), %{})
+      expect = unquote(expect)
+      case expect do
+        %{}  -> expect
+        is_list -> Enum.into(expect, %{})
       end
     end
   end
