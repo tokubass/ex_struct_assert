@@ -8,6 +8,17 @@ defmodule StructAssertTest do
   import StructAssert, only: [assert_subset: 2]
   doctest StructAssert
 
+  defmacrop catch_assertion(expr) do
+    quote do
+      try do
+        unquote(expr)
+      rescue
+        ex -> ex
+      end
+    end
+  end
+  
+
   describe "subset(struct,map)" do
     test "success" do
       got  = %MyStruct{}
@@ -18,14 +29,12 @@ defmodule StructAssertTest do
     test "fail" do
       got_xx  = %MyStruct{}
       expect_fail = %{a: 1, b: 2 }
-      res = try do
-              assert_subset(
-                got_xx,
-                expect_fail
-              )
-            rescue
-              error in [ExUnit.AssertionError] -> error
-            end
+      res = catch_assertion(
+        assert_subset(
+          got_xx,
+          expect_fail
+        )
+      )
       assert res.expr  == "assert_subset(got_xx, expect_fail)"
       assert res.left  == %{a: 1, b: 1, z: 10 }
       assert res.right == %{a: 1, b: 2, z: 10 }
@@ -39,17 +48,15 @@ defmodule StructAssertTest do
     end
     test "fail" do
       got  = %MyStruct{}
-      res = try do
-              assert_subset(
-                got,
-                %{
-                  a: 1,
-                  b: 2
-                }
-              )
-            rescue
-              error in [ExUnit.AssertionError] -> error
-            end
+      res = catch_assertion(
+        assert_subset(
+          got,
+          %{
+            a: 1,
+            b: 2
+          }
+        )
+      )
 
       assert res.expr  == "assert_subset(got, %{a: 1, b: 2})"
       assert res.left  == %{a: 1, b: 1, z: 10 }
@@ -65,14 +72,12 @@ defmodule StructAssertTest do
 
     test "fail" do
       expect_fail = %{a: 1, b: 2 }
-      res = try do
-              assert_subset(
-                %MyStruct{},
-                expect_fail
-              )
-            rescue
-              error in [ExUnit.AssertionError] -> error
-            end
+      res = catch_assertion(
+        assert_subset(
+          %MyStruct{},
+          expect_fail
+        )
+      )
       assert res.expr  == "assert_subset(%MyStruct{}, expect_fail)"
       assert res.left  == %{a: 1, b: 1, z: 10 }
       assert res.right == %{a: 1, b: 2, z: 10 }
@@ -84,18 +89,15 @@ defmodule StructAssertTest do
       assert_subset(%MyStruct{}, %{a: 1, b: 1})
     end
     test "fail" do
-      res = try do
-              assert_subset(
-                %MyStruct{a: 1},
-                %{
-                  a: 1,
-                  b: 2
-                }
-              )
-            rescue
-              error in [ExUnit.AssertionError] -> error
-            end
-
+      res = catch_assertion(
+        assert_subset(
+          %MyStruct{a: 1},
+          %{
+            a: 1,
+            b: 2
+          }
+        )
+      )
       assert res.expr  == "assert_subset(%MyStruct{a: 1}, %{a: 1, b: 2})"
       assert res.left  == %{a: 1, b: 1, z: 10 }
       assert res.right == %{a: 1, b: 2, z: 10 }
@@ -113,12 +115,7 @@ defmodule StructAssertTest do
       got    = %{a: 1, b: 1 };
       expect = %{a: 1, b: 2 };
 
-      res = try do
-              assert_subset(got,expect)
-            rescue
-              error in [ExUnit.AssertionError] -> error
-            end
-
+      res = catch_assertion( assert_subset(got,expect) )
       assert res.expr  == "assert_subset(got, expect)"
       assert res.left  == %{a: 1, b: 1}
       assert res.right == %{a: 1, b: 2}
@@ -137,15 +134,12 @@ defmodule StructAssertTest do
       )
     end
     test "fail" do
-
-      res = try do
-              assert_subset(
-                struct(MyStruct, a: 1,b: 2),
-                [a: 1, b: 3]
-              )
-            rescue
-              error in [ExUnit.AssertionError] -> error
-            end
+      res = catch_assertion(
+        assert_subset(
+          struct(MyStruct, a: 1,b: 2),
+          [a: 1, b: 3]
+        )
+      )
       assert res.expr  == "assert_subset(struct(MyStruct, a: 1, b: 2), [a: 1, b: 3])"
       assert res.left  == %{a: 1, b: 2, z: 10}
       assert res.right == %{a: 1, b: 3, z: 10}

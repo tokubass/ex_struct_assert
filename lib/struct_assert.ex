@@ -1,4 +1,5 @@
 defmodule StructAssert do
+
   @moduledoc """
   A useful tool for testing sturct and map in Elixir.
   """
@@ -29,13 +30,27 @@ defmodule StructAssert do
       import  ExUnit.Assertions
       got_map  = StructAssert.got_value_to_map(unquote(got))
       expect_map = StructAssert.expect_value_to_map(unquote(expect))
-      expect = DeepMerge.deep_merge(got_map,expect_map)
+
+      resolver = fn
+        (_, original, override) when is_function(original) and is_function(override) -> DeepMerge.continue_deep_merge
+        (_, original, override) when is_function(override) ->
+          case override.(original) do
+                 true -> original
+                 _ -> override
+          end
+
+        (_, _original, _override) -> DeepMerge.continue_deep_merge
+      end
+
+      expect = DeepMerge.deep_merge(got_map,expect_map, resolver)
       assert got_map == expect,
         expr: unquote(expr),
         left: got_map,
         right: expect
     end
   end
+
+
 
   @doc """
   deprecated
@@ -45,7 +60,6 @@ defmodule StructAssert do
       StructAssert.assert_subset(unquote(got),unquote(expect))
     end
   end
-
 
 
   def build_expr_for_error_message(got,expect) do
