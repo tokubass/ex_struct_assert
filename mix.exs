@@ -3,7 +3,7 @@ defmodule StructAssert.Mixfile do
 
   def project do
     [app: :struct_assert,
-     version: "0.5.0",
+     version: "0.5.1",
      elixir: "~> 1.4",
      description: "A useful tool for testing sturct and map in Elixir",
      package: [
