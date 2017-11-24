@@ -4,6 +4,12 @@ defmodule StructAssert do
   A useful tool for testing sturct and map in Elixir.
   """
 
+  defmacro __using__(_opts) do
+    quote do
+      import StructAssert, only: [assert_subset: 2]
+    end
+  end
+  
   @doc """
   assert only a part of struct and map.
 

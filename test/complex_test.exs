@@ -1,6 +1,6 @@
 defmodule ComplexTest do
   use ExUnit.Case
-  import StructAssert, only: [assert_subset: 2]
+  use StructAssert
 
   test "map" do
     got = %{

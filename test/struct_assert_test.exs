@@ -5,7 +5,7 @@ end
 
 defmodule StructAssertTest do
   use ExUnit.Case
-  import StructAssert, only: [assert_subset: 2]
+  use StructAssert
   doctest StructAssert
 
   defmacrop catch_assertion(expr) do

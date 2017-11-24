@@ -1,6 +1,6 @@
 defmodule CallbackTest do
   use ExUnit.Case
-  import StructAssert, only: [assert_subset: 2]
+  use StructAssert
 
   defmacrop catch_assertion(expr) do
     quote do
