@@ -12,12 +12,20 @@ A useful tool for testing sturct and map in Elixir.
 
   defmodule Example
     use ExUnit.Case
-    import StructAssert, only: [assert_subset?: 2]
+    use StructAssert
 
-    assert_subset(%MyStruct{}, [a: 1, b: 2])
-    # code:  assert_subset(%MyStruct{}, [a: 1, b: 2])
-    # left:  %{a: 1, b: 1, z: 10}
-    # right: %{a: 1, b: 2, z: 10}
+    test "example" do
+      assert_subset(%MyStruct{}, [a: 1, b: 2])
+      # code:  assert_subset(%MyStruct{}, [a: 1, b: 2])
+      # left:  %{a: 1, b: 1, z: 10}
+      # right: %{a: 1, b: 2, z: 10}
+
+      assert_subset(%MyStruct{}, [a: 1, b: &is_atom(&1)])
+      # code:  assert_subset(%MyStruct{}, [a: 1, b: &(is_atom(&1))])
+      # left:  %{a: 1, z: 10, b: 1}
+      # right: %{a: 1, z: 10, b: &:erlang.is_atom/1}
+    end
+
   end
 
 ```
