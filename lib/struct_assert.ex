@@ -3,12 +3,7 @@ defmodule StructAssert do
   @moduledoc """
   A useful tool for testing sturct and map in Elixir.
   """
-
-  defmacro __using__(_opts) do
-    quote do
-      import StructAssert, only: [assert_subset: 2]
-    end
-  end
+  use Exporter, default: [assert_subset: 2]
   
   @doc """
   assert only a part of struct and map.

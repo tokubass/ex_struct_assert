@@ -3,7 +3,7 @@ defmodule StructAssert.Mixfile do
 
   def project do
     [app: :struct_assert,
-     version: "0.5.1",
+     version: "0.5.2",
      elixir: "~> 1.4",
      description: "A useful tool for testing sturct and map in Elixir",
      package: [
@@ -36,6 +36,7 @@ defmodule StructAssert.Mixfile do
   defp deps do
     [
       {:deep_merge, "~> 0.1.1"},
+      {:exporter, "~> 0.1.0"},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
