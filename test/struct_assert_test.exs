@@ -2,7 +2,6 @@ defmodule MyStruct do
   defstruct a: 1, b: 1, z: 10
 end
 
-
 defmodule StructAssertTest do
   use ExUnit.Case
   use StructAssert
@@ -17,70 +16,75 @@ defmodule StructAssertTest do
       end
     end
   end
-  
 
   describe "subset(struct,map)" do
     test "success" do
-      got  = %MyStruct{}
-      expect = %{a: 1, b: 1 }
-      assert_subset(got,  expect)
+      got = %MyStruct{}
+      expect = %{a: 1, b: 1}
+      assert_subset(got, expect)
     end
 
     test "fail" do
-      got_xx  = %MyStruct{}
-      expect_fail = %{a: 1, b: 2 }
-      res = catch_assertion(
-        assert_subset(
-          got_xx,
-          expect_fail
+      got_xx = %MyStruct{}
+      expect_fail = %{a: 1, b: 2}
+
+      res =
+        catch_assertion(
+          assert_subset(
+            got_xx,
+            expect_fail
+          )
         )
-      )
-      assert res.expr  == "assert_subset(got_xx, expect_fail)"
-      assert res.left  == %{a: 1, b: 1, z: 10 }
-      assert res.right == %{a: 1, b: 2, z: 10 }
+
+      assert res.expr == "assert_subset(got_xx, expect_fail)"
+      assert res.left == %{a: 1, b: 1, z: 10}
+      assert res.right == %{a: 1, b: 2, z: 10}
     end
   end
 
   describe "subset(struct,map_literal)" do
     test "success" do
-      got  = %MyStruct{}
+      got = %MyStruct{}
       assert_subset(got, %{a: 1, b: 1})
     end
+
     test "fail" do
-      got  = %MyStruct{}
-      res = catch_assertion(
-        assert_subset(
-          got,
-          %{
+      got = %MyStruct{}
+
+      res =
+        catch_assertion(
+          assert_subset(got, %{
             a: 1,
             b: 2
-          }
+          })
         )
-      )
 
-      assert res.expr  == "assert_subset(got, %{a: 1, b: 2})"
-      assert res.left  == %{a: 1, b: 1, z: 10 }
-      assert res.right == %{a: 1, b: 2, z: 10 }
+      assert res.expr == "assert_subset(got, %{a: 1, b: 2})"
+      assert res.left == %{a: 1, b: 1, z: 10}
+      assert res.right == %{a: 1, b: 2, z: 10}
     end
   end
 
   describe "subset(struct_literal,map)" do
     test "success" do
-      expect = %{a: 1, b: 1 };
-      assert_subset(%MyStruct{},  expect)
+      expect = %{a: 1, b: 1}
+      assert_subset(%MyStruct{}, expect)
     end
 
     test "fail" do
-      expect_fail = %{a: 1, b: 2 }
-      res = catch_assertion(
-        assert_subset(
-          %MyStruct{},
-          expect_fail
+      expect_fail = %{a: 1, b: 2}
+
+      res =
+        catch_assertion(
+          assert_subset(
+            %MyStruct{},
+            expect_fail
+          )
         )
-      )
-      assert res.expr  == "assert_subset(%MyStruct{}, expect_fail)"
-      assert res.left  == %{a: 1, b: 1, z: 10 }
-      assert res.right == %{a: 1, b: 2, z: 10 }
+
+      assert res.expr == "assert_subset(%MyStruct{}, expect_fail)"
+      assert res.left == %{a: 1, b: 1, z: 10}
+      assert res.right == %{a: 1, b: 2, z: 10}
     end
   end
 
@@ -88,36 +92,36 @@ defmodule StructAssertTest do
     test "success" do
       assert_subset(%MyStruct{}, %{a: 1, b: 1})
     end
+
     test "fail" do
-      res = catch_assertion(
-        assert_subset(
-          %MyStruct{a: 1},
-          %{
+      res =
+        catch_assertion(
+          assert_subset(%MyStruct{a: 1}, %{
             a: 1,
             b: 2
-          }
+          })
         )
-      )
-      assert res.expr  == "assert_subset(%MyStruct{a: 1}, %{a: 1, b: 2})"
-      assert res.left  == %{a: 1, b: 1, z: 10 }
-      assert res.right == %{a: 1, b: 2, z: 10 }
+
+      assert res.expr == "assert_subset(%MyStruct{a: 1}, %{a: 1, b: 2})"
+      assert res.left == %{a: 1, b: 1, z: 10}
+      assert res.right == %{a: 1, b: 2, z: 10}
     end
   end
 
-  
   describe "subset(map,map)" do
     test "success" do
-      got    = %{a: 1, b: 1 };
-      expect = %{a: 1, b: 1 };
-      assert_subset(got,expect)
+      got = %{a: 1, b: 1}
+      expect = %{a: 1, b: 1}
+      assert_subset(got, expect)
     end
-    test "fail" do
-      got    = %{a: 1, b: 1 };
-      expect = %{a: 1, b: 2 };
 
-      res = catch_assertion( assert_subset(got,expect) )
-      assert res.expr  == "assert_subset(got, expect)"
-      assert res.left  == %{a: 1, b: 1}
+    test "fail" do
+      got = %{a: 1, b: 1}
+      expect = %{a: 1, b: 2}
+
+      res = catch_assertion(assert_subset(got, expect))
+      assert res.expr == "assert_subset(got, expect)"
+      assert res.left == %{a: 1, b: 1}
       assert res.right == %{a: 1, b: 2}
     end
   end
@@ -125,25 +129,30 @@ defmodule StructAssertTest do
   describe "subset(struct,kwlist)" do
     test "success" do
       assert_subset(
-        struct(MyStruct, a: 1,b: 2),
-        a: 1, b: 2
+        struct(MyStruct, a: 1, b: 2),
+        a: 1,
+        b: 2
       )
+
       assert_subset(
-        struct(MyStruct, [a: 1, b: [1,2], z: :v]),
-        [a: 1, b: [1,2]] ++ [z: :v ]
+        struct(MyStruct, a: 1, b: [1, 2], z: :v),
+        [a: 1, b: [1, 2]] ++ [z: :v]
       )
     end
+
     test "fail" do
-      res = catch_assertion(
-        assert_subset(
-          struct(MyStruct, a: 1,b: 2),
-          [a: 1, b: 3]
+      res =
+        catch_assertion(
+          assert_subset(
+            struct(MyStruct, a: 1, b: 2),
+            a: 1,
+            b: 3
+          )
         )
-      )
-      assert res.expr  == "assert_subset(struct(MyStruct, a: 1, b: 2), [a: 1, b: 3])"
-      assert res.left  == %{a: 1, b: 2, z: 10}
+
+      assert res.expr == "assert_subset(struct(MyStruct, a: 1, b: 2), [a: 1, b: 3])"
+      assert res.left == %{a: 1, b: 2, z: 10}
       assert res.right == %{a: 1, b: 3, z: 10}
     end
   end
-  
 end

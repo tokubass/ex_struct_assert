@@ -2,18 +2,20 @@ defmodule StructAssert.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :struct_assert,
-     version: "0.5.2",
-     elixir: "~> 1.4",
-     description: "A useful tool for testing sturct and map in Elixir",
-     package: [
-       maintainers: ["tokubass"],
-       licenses: ["This library is free software"],
-       links: %{"GitHub" => "https://github.com/tokubass/ex_struct_assert"}
-     ],
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps()]
+    [
+      app: :struct_assert,
+      version: "0.5.2",
+      elixir: "~> 1.4",
+      description: "A useful tool for testing sturct and map in Elixir",
+      package: [
+        maintainers: ["tokubass"],
+        licenses: ["This library is free software"],
+        links: %{"GitHub" => "https://github.com/tokubass/ex_struct_assert"}
+      ],
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      deps: deps()
+    ]
   end
 
   # Configuration for the OTP application
